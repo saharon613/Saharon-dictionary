@@ -7,6 +7,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class TouroDictionaryService {
 
     private DictionaryApi api;
+
     public TouroDictionaryService(String lambdaUrl) {
         // Create Retrofit instance
         Retrofit retrofit = new Retrofit.Builder()
