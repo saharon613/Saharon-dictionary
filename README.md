@@ -1,6 +1,6 @@
-### Project Name
+### Touro Dictionary
 
-Add a description
+Returns a definition when given a word 
 
 ### Screenshots
 

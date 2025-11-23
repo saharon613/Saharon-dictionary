@@ -21,7 +21,7 @@ public class TouroDictionaryService {
 
     public DictionaryResponse lookupWord(String word) throws Exception {
         // Create the request object
-        DictionaryRequest request = new DictionaryRequest();
+        DictionaryRequest request = new DictionaryRequest(word);
         request.setWord(word);
 
         // Make the HTTP call
