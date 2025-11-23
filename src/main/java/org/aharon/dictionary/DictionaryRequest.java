@@ -1,6 +1,6 @@
 package org.aharon.dictionary;
 
-class DictionaryRequest {
+public class DictionaryRequest {
     private String word;
 
     public DictionaryRequest(String word) {
@@ -9,9 +9,5 @@ class DictionaryRequest {
 
     public String getWord() {
         return word;
-    }
-
-    public void setWord(String word) {
-        this.word = word;
     }
 }

@@ -1,6 +1,6 @@
 package org.aharon.dictionary;
 
-class DictionaryResponse {
+public class DictionaryResponse {
     private String word;
     private String definition;
 
