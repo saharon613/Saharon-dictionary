@@ -5,7 +5,7 @@ import retrofit2.http.Body;
 import retrofit2.http.POST;
 
 // Define the API interface
-public interface DictionaryApi {
+public interface DictionaryService {
     @POST("/")
     Single<DictionaryResponse> lookupWord(@Body DictionaryRequest request);
 }

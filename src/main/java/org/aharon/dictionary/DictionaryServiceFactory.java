@@ -12,13 +12,13 @@ public class DictionaryServiceFactory {
         this.lambdaUrl = lambdaUrl;
     }
 
-    public DictionaryApi create() {
+    public DictionaryService create() {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(lambdaUrl)
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
                 .build();
 
-        return retrofit.create(DictionaryApi.class);
+        return retrofit.create(DictionaryService.class);
     }
 }
