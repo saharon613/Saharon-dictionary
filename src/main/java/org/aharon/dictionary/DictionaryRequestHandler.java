@@ -3,32 +3,62 @@ package org.aharon.dictionary;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
+import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
 import com.google.gson.Gson;
 
-public class DictionaryRequestHandler implements RequestHandler<APIGatewayProxyRequestEvent, DictionaryResponse> {
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
+public class DictionaryRequestHandler implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent>
+{
     private TouroDictionary dictionary;
+    private Gson gson;
 
-    public DictionaryRequestHandler() {
-        dictionary = new TouroDictionary();
+    public DictionaryRequestHandler()
+    {
+        this.dictionary = new TouroDictionary();
+        this.gson = new Gson();
     }
 
     @Override
-    public DictionaryResponse handleRequest(APIGatewayProxyRequestEvent event, Context context) {
-        // Get the JSON body from the request
-        String body = event.getBody();
+    public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent event, Context context)
+    {
+        try
+        {
+            // retrieve the body and change Json into a new object
+            String body = event.getBody();
+            DictionaryRequest request = gson.fromJson(body, DictionaryRequest.class);
 
-        // Convert JSON to DictionaryRequest object
-        Gson gson = new Gson();
-        DictionaryRequest request = gson.fromJson(body, DictionaryRequest.class);
+            // get the definition and create a DictionaryResponse
+            String definition = dictionary.lookup(request.getWord());
+            DictionaryResponse response = new DictionaryResponse(request.getWord(), definition);
 
-        // Get the word from the request
-        String word = request.getWord();
+            // create the HTTP response with the DictionaryResponse
+            String responseJson = gson.toJson(response);
+            APIGatewayProxyResponseEvent apiResponse = new APIGatewayProxyResponseEvent();
+            apiResponse.setStatusCode(200);
+            apiResponse.setBody(responseJson);
+            return apiResponse;
 
-        // Look up the word in the dictionary
-        String definition = dictionary.lookup(word);
+        } catch (Exception e)
+        {
+            // this prints the error to the AWS log file , this prints the error (stack track) to the AWS log file
+            e.printStackTrace();
 
-        // Create and return the response
-        return new DictionaryResponse(word, definition);
+            // this outputs the stack trace to the client - whoever initiated the request - my computer
+            return toResponseEvent(e);
+        }
+    }
+
+    private APIGatewayProxyResponseEvent toResponseEvent(Exception e)
+    {
+        // this outputs the stack trace to the client - whoever initiated the request - my computer
+        APIGatewayProxyResponseEvent apiResponse = new APIGatewayProxyResponseEvent();
+        apiResponse.setStatusCode(500);
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(stringWriter);
+        e.printStackTrace(printWriter);
+        apiResponse.setBody(stringWriter.toString());
+        return apiResponse;
     }
 }
