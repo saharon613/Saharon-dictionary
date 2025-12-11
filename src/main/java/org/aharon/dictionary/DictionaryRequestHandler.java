@@ -5,7 +5,10 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
 import com.google.gson.Gson;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -15,10 +18,37 @@ public class DictionaryRequestHandler implements RequestHandler<APIGatewayProxyR
     private TouroDictionary dictionary;
     private Gson gson;
 
+    //    public DictionaryRequestHandler()
+    //    {
+    //        this.dictionary = new TouroDictionary();
+    //        this.gson = new Gson();
+    //    }
+
     public DictionaryRequestHandler()
     {
-        this.dictionary = new TouroDictionary();
-        this.gson = new Gson();
+        try {
+            // Read dictionary from S3
+            S3Client s3Client = S3Client.create();
+
+            String bucketName = "aharon-dictionary";
+            String key = "dictionary.txt";
+
+            GetObjectRequest getObjectRequest = GetObjectRequest
+                    .builder()
+                    .bucket(bucketName)
+                    .key(key)
+                    .build();
+
+            InputStream in = s3Client.getObject(getObjectRequest);
+
+            // Create dictionary with S3 input stream
+            this.dictionary = new TouroDictionary(in);
+            this.gson = new Gson();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to load dictionary from S3", e);
+        }
     }
 
     @Override

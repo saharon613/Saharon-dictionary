@@ -15,9 +15,22 @@ public class TouroDictionary {
         loadDictionary();
     }
 
+    public TouroDictionary(InputStream inputStream) {
+        dictionary = new HashMap<>();
+        loadDictionary(inputStream);
+    }
+
     private void loadDictionary() {
         try {
             InputStream inputS = getClass().getClassLoader().getResourceAsStream("dictionary.txt");
+            loadDictionary(inputS);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void loadDictionary(InputStream inputS) {
+        try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(inputS));
 
             String line;
