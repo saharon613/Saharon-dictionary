@@ -18,11 +18,11 @@ public class DictionaryRequestHandler implements RequestHandler<APIGatewayProxyR
     private TouroDictionary dictionary;
     private Gson gson;
 
-//    public DictionaryRequestHandler()
-//    {
-//        this.dictionary = new TouroDictionary();
-//        this.gson = new Gson();
-//    }
+    //    public DictionaryRequestHandler()
+    //    {
+    //        this.dictionary = new TouroDictionary();
+    //        this.gson = new Gson();
+    //    }
 
     public DictionaryRequestHandler()
     {
